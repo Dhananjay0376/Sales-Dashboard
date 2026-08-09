@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Supabase RPC Fetch Test</title>
+<style>
+  body { font-family: system-ui, sans-serif; background:#0B0F17; color:#E8EDF5; padding:30px; max-width:700px; margin:0 auto; }
+  h1 { font-size:18px; }
+  input { width:100%; padding:10px; margin:8px 0; background:#121826; border:1px solid #1F2937; color:#E8EDF5; border-radius:6px; box-sizing:border-box; }
+  button { padding:10px 18px; background:#5B8DEF; color:#fff; border:none; border-radius:6px; cursor:pointer; font-weight:600; }
+  pre { background:#121826; border:1px solid #1F2937; padding:14px; border-radius:8px; white-space:pre-wrap; word-break:break-word; font-size:12.5px; margin-top:16px; max-height:400px; overflow:auto; }
+  .ok { color:#48CFAD; }
+  .err { color:#ED5565; }
+</style>
+</head>
+<body>
+  <h1>Direct test: Supabase RPC endpoint</h1>
+  <p>Open this file directly in your browser (double-click it, or drag it into a Chrome tab). This runs completely outside any sandbox, so whatever happens here is the real, unfiltered result.</p>
+  <input id="key" type="password" placeholder="Paste your Supabase publishable/anon key" />
+  <button onclick="run()">Test fetch</button>
+  <pre id="out">Result will appear here...</pre>
+
+  <script>
+    async function run() {
+      const key = document.getElementById('key').value.trim();
+      const out = document.getElementById('out');
+      out.className = '';
+      out.textContent = 'Fetching...';
+      const url = 'https://tvhvzgkabuynenzofbpn.supabase.co/rest/v1/rpc/get_sales_dashboard';
+      try {
+        const headers = {
+          'Content-Type': 'application/json',
+          'apikey': key
+        };
+        if (key.startsWith('eyJ')) {
+          headers['Authorization'] = 'Bearer ' + key;
+        }
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({})
+        });
+        const text = await res.text();
+        out.className = res.ok ? 'ok' : 'err';
+        out.textContent = `Status: ${res.status} ${res.statusText}\n\n${text}`;
+      } catch (e) {
+        out.className = 'err';
+        out.textContent = 'Network-level failure (this is what "Failed to fetch" means):\n\n' + e.message +
+          '\n\nOpen this page\'s DevTools (F12) → Console/Network tab for the exact reason ' +
+          '(commonly a CORS error, DNS issue, or ad-blocker/extension interference).';
+      }
+    }
+  </script>
+</body>
+</html>
